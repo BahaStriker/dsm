@@ -154,113 +154,6 @@
                                 </li>
                             </ul>
                         </li>
-
-
-                        <!-- Websites Notifications -->
-                        <li class="dropdown notifications-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-globe"></i>
-                                <?php if(count($main_websites_unresolved) == 0) { ?><span class="label label-success"><i class="fa fa-check"></i></span><?php } ?>
-                                <?php if(count($main_websites_unresolved) > 0) { ?><span class="label label-warning"><?php echo count($main_websites_unresolved); ?></span><?php } ?>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="header">
-                                    <?php if(count($main_websites_unresolved) == 0) { ?><?php _e('Hooray! All websites are healthy.') ?><?php } ?>
-                                    <?php if(count($main_websites_unresolved) > 0) { ?><?php _e('You have') ?> <?php echo count($main_websites_unresolved); ?> <?php _e('website alerts.') ?><?php } ?>
-                                </li>
-
-                                <li>
-                                    <ul class="menu">
-                                        <?php if(count($main_websites_unresolved) == 0) { ?>
-                                            <li class="text-center"><i class="fa fa-check-circle fa-5x text-green" style="padding:50px;"></i></li>
-                                        <?php } ?>
-
-                                        <?php foreach($main_websites_unresolved as $incident) { ?>
-                                            <li>
-                                                <a href="?route=websites/manage&id=<?php echo $incident['websiteid']; ?>">
-                                                    <?php if($incident['status'] == 2) { ?>
-                                                        <i class="fa fa-warning text-yellow" data-toggle="tooltip" title="<?php _e("Warning"); ?>"></i>
-                                                    <?php } ?>
-
-                                                    <?php if($incident['status'] == 3) { ?>
-                                                        <i class="fa fa-warning text-red" data-toggle="tooltip" title="<?php _e("Alert"); ?>"></i>
-                                                    <?php } ?>
-
-                                                    <?php if($incident['status'] == 0) { ?>
-                                                        <i class="fa fa-warning text-green" data-toggle="tooltip" title="<?php _e("Unknown"); ?>"></i>
-                                                    <?php } ?>
-
-                                                    <?php echo getSingleValue("app_websites","name",$incident['websiteid']); ?> -
-                                                    <?php if($incident['type'] == "responsecode") _e('HTTP Response Code'); ?>
-													<?php if($incident['type'] == "loadtime") _e('Load Time'); ?>
-													<?php if($incident['type'] == "searchstringmissing") _e('Search String Missing'); ?>
-
-													<?php if($incident['type'] == "searchstringmissing") { ?>
-
-													<?php } else { ?>
-														<?php echo $incident['comparison']; ?> <?php echo $incident['comparison_limit']; ?>
-													<?php } ?>
-                                                </a>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-
-
-
-                        <!-- Checks Notifications -->
-                        <li class="dropdown notifications-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-check-circle"></i>
-                                <?php if(count($main_checks_unresolved) == 0) { ?><span class="label label-success"><i class="fa fa-check"></i></span><?php } ?>
-                                <?php if(count($main_checks_unresolved) > 0) { ?><span class="label label-warning"><?php echo count($main_checks_unresolved); ?></span><?php } ?>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="header">
-                                    <?php if(count($main_checks_unresolved) == 0) { ?><?php _e('Hooray! All checks are healthy.') ?><?php } ?>
-                                    <?php if(count($main_checks_unresolved) > 0) { ?><?php _e('You have') ?> <?php echo count($main_checks_unresolved); ?> <?php _e('checks alerts.') ?><?php } ?>
-                                </li>
-
-                                <li>
-                                    <ul class="menu">
-                                        <?php if(count($main_checks_unresolved) == 0) { ?>
-                                            <li class="text-center"><i class="fa fa-check-circle fa-5x text-green" style="padding:50px;"></i></li>
-                                        <?php } ?>
-
-                                        <?php foreach($main_checks_unresolved as $incident) { ?>
-                                            <li>
-                                                <a href="?route=checks/manage&id=<?php echo $incident['checkid']; ?>">
-                                                    <?php if($incident['status'] == 2) { ?>
-                                                        <i class="fa fa-warning text-yellow" data-toggle="tooltip" title="<?php _e("Warning"); ?>"></i>
-                                                    <?php } ?>
-
-                                                    <?php if($incident['status'] == 3) { ?>
-                                                        <i class="fa fa-warning text-red" data-toggle="tooltip" title="<?php _e("Alert"); ?>"></i>
-                                                    <?php } ?>
-
-                                                    <?php if($incident['status'] == 0) { ?>
-                                                        <i class="fa fa-warning text-green" data-toggle="tooltip" title="<?php _e("Unknown"); ?>"></i>
-                                                    <?php } ?>
-
-                                                    <?php echo getSingleValue("app_checks","name",$incident['checkid']); ?> -
-                                                    <?php if($incident['type'] == "offline") _e('Check Offline'); ?>
-													<?php if($incident['type'] == "responsetime") _e('Response Time'); ?>
-													<?php if($incident['type'] == "blacklisted") _e('Listed In Blacklist'); ?>
-													<?php if($incident['type'] == "dnsfailed") _e('DNS Lookup Failed'); ?>
-													<?php if($incident['type'] == "offline" || $incident['type'] == "blacklisted" || $incident['type'] == "dnsfailed") { ?>
-													<?php } else { ?>
-														<?php echo $incident['comparison']; ?> <?php echo $incident['comparison_limit']; ?>
-													<?php } ?>
-                                                </a>
-                                            </li>
-                                        <?php } ?>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-
                         <!-- Autorefresh -->
                         <li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -300,22 +193,9 @@
                                             <li><a href="#" onClick='showM("?modal=servers/add&reroute=servers&routeid=&section=");return false' data-toggle="modal"><i class="fa fa-server text-blue"></i> <?php _e('Add Server'); ?></a></li>
                                         <?php } ?>
 
-                                        <?php if(in_array("addWebsite",$perms)) { ?>
-                                            <li><a href="#" onClick='showM("?modal=websites/add&reroute=servers&routeid=&section=");return false' data-toggle="modal"><i class="fa fa-globe text-blue"></i> <?php _e('Add Website'); ?></a></li>
-                                        <?php } ?>
-
-                                        <?php if(in_array("addCheck",$perms)) { ?>
-                                            <li><a href="#" onClick='showM("?modal=checks/add&reroute=servers&routeid=&section=");return false' data-toggle="modal"><i class="fa fa-check-circle text-blue"></i> <?php _e('Add Check'); ?></a></li>
-                                        <?php } ?>
-
                                         <?php if(in_array("addContact",$perms)) { ?>
                                             <li><a href="#" onClick='showM("?modal=contacts/add&reroute=servers&routeid=&section=");return false' data-toggle="modal"><i class="fa fa-user-circle text-blue"></i> <?php _e('Add Contact'); ?></a></li>
                                         <?php } ?>
-
-                                        <?php if(in_array("addPage",$perms)) { ?>
-                                            <li><a href="#" onClick='showM("?modal=pages/add&reroute=servers&routeid=&section=");return false' data-toggle="modal"><i class="fa fa-bookmark text-blue"></i> <?php _e('Add Page'); ?></a></li>
-                                        <?php } ?>
-
                                     </ul>
                                 </li>
                             </ul>

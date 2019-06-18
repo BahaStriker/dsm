@@ -35,34 +35,6 @@
            <!-- ./col -->
            <div class="col-lg-3 col-xs-6">
              <!-- small box -->
-             <div class="small-box bg-blue">
-               <div class="inner">
-                 <h3><?php echo $websites_count; ?></h3>
-                 <p><?php _e('Websites'); ?></p>
-               </div>
-               <div class="icon">
-                 <i class="fa fa-globe"></i>
-               </div>
-               <a href="?route=websites" class="small-box-footer"><?php _e('View all'); ?> <i class="fa fa-arrow-circle-right"></i></a>
-             </div>
-           </div>
-           <!-- ./col -->
-  		 <div class="col-lg-3 col-xs-6">
-             <!-- small box -->
-             <div class="small-box bg-teal">
-               <div class="inner">
-                 <h3><?php echo $checks_count; ?></h3>
-                 <p><?php _e('Checks'); ?></p>
-               </div>
-               <div class="icon">
-                 <i class="fa fa-check-circle"></i>
-               </div>
-               <a href="?route=checks" class="small-box-footer"><?php _e('View all'); ?> <i class="fa fa-arrow-circle-right"></i></a>
-             </div>
-           </div>
-           <!-- ./col -->
-           <div class="col-lg-3 col-xs-6">
-             <!-- small box -->
 
   	           <div class="small-box bg-yellow">
   	             <div class="inner">
@@ -74,7 +46,22 @@
   	             </div>
   	             <a href="?route=alerting/contacts" class="small-box-footer"><?php _e('View all'); ?> <i class="fa fa-arrow-circle-right"></i></a>
   	           </div>
-
+			
+		<?php if(in_array("viewUsers",$perms)) { ?>
+			<div class="col-lg-3 col-xs-6">
+             <!-- small box -->
+             <div class="small-box bg-blue">
+               <div class="inner">
+                 <h3><?php echo $users_count; ?></h3>
+                 <p><?php _e('Users'); ?></p>
+               </div>
+               <div class="icon">
+                 <i class="fa fa-user"></i>
+               </div>
+               <a href="?route=users" class="small-box-footer"><?php _e('View all'); ?> <i class="fa fa-arrow-circle-right"></i></a>
+             </div>
+           </div>
+		<?php } ?>
 
            </div>
            <!-- ./col -->

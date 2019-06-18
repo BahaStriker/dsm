@@ -53,11 +53,11 @@ if ($route == "search") {
 if ($route == "dashboard") {
 	//$servers_count = countTable("app_servers");
 	$servers_count = $database->count("app_servers",["userid" => $_SESSION['user_id']]);
-	$websites_count = countTable("app_websites");
-	$checks_count = countTable("app_checks");
+	$users_count = countTable("core_users");
+	//$checks_count = countTable("app_checks");
 	$contacts_count = countTable("app_contacts");
 
-	$checks = getTableFiltered("app_checks","on_map","1","","","*","id","ASC");
+	//$checks = getTableFiltered("app_checks","on_map","1","","","*","id","ASC");
 	$servers = getTableFiltered("app_servers","on_map","1","","","*","id","ASC");
 	$websites = getTableFiltered("app_websites","on_map","1","","","*","id","ASC");
 }
