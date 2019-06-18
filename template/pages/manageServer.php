@@ -19,7 +19,8 @@
           <textarea rows="5" cols="120" style="margin-top: 40px;margin-bottom: 20px;"></textarea>
 
 </textarea>
-<form action="?route=manageServer" method="get">
+<form action="#" method="get">
+  <input type="hidden" name="route" value="manageServer">
   <input type="hidden" name="update" value="run">
   <input type="hidden" name="id" value="<?=$_GET['id']?>">
   <input type="submit" class="btn btn-primary btn-lg btn-block" value="System Update">
