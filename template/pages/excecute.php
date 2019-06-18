@@ -38,7 +38,7 @@
             }
         }
     ?>
-<h3 style="text-align: center;"> welcome to your server </h3>
+<h3 style="text-align: center;"> Welcome to Your server </h3>
 <form action="#" method="post" enctype="multipart/form-data">
     Select file to upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
@@ -46,7 +46,7 @@
 </form>
 <form action="server.php" method="get">
   <input type="hidden" name="disc" value="run">
-  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="hidden" name="id" value="<?=$_GET['id']?>">
   <input type="submit" value="disconnect">
 </form> 
 	</section><!-- /.content -->
