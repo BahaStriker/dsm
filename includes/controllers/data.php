@@ -51,8 +51,12 @@ if ($route == "search") {
 
 // DASHBOARD
 if ($route == "dashboard") {
-	//$servers_count = countTable("app_servers");
-	$servers_count = $database->count("app_servers",["userid" => $_SESSION['user_id']]);
+	if(in_array("addRole",$perms)) {
+		$servers_count = countTable("app_servers");
+	}else{
+		$servers_count = $database->count("app_servers",["userid" => $_SESSION['user_id']]);	
+	}
+	
 	$users_count = countTable("core_users");
 	//$checks_count = countTable("app_checks");
 	$contacts_count = countTable("app_contacts");
@@ -68,6 +72,32 @@ if ($route == "servers") {
 	$servers = getTable("app_servers","*",["userid" => $_SESSION['user_id']],"ASC");
 	//$servers = $database->get("app_servers","*",["userid" => $_SESSION['user_id']]);
 	$pageTitle = __("Servers");
+}
+
+//test excecute
+if ($route == "excecute") {
+	isAuthorized("viewServers");
+	$server = getRowById("app_servers", $_GET['id']);
+	//$servers = $database->get("app_servers","*",["userid" => $_SESSION['user_id']]);
+	$pageTitle = __("Server");
+	
+	$latest = Server::latestData($_GET['id']);
+
+	$start = $_SESSION['range_start'];
+	$end = $_SESSION['range_end'];
+}
+
+//test excecute
+if ($route == "manageServer") {
+	isAuthorized("viewServers");
+	$server = getRowById("app_servers", $_GET['id']);
+	//$servers = $database->get("app_servers","*",["userid" => $_SESSION['user_id']]);
+	$pageTitle = __("Manage Server");
+	
+	$latest = Server::latestData($_GET['id']);
+
+	$start = $_SESSION['range_start'];
+	$end = $_SESSION['range_end'];
 }
 
 if ($route == "servers/manage-linux") {

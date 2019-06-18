@@ -19,9 +19,6 @@
 						<li <?php if ($section == "monitoring") echo 'class="active"'; ?> ><a href="#monitoring" data-toggle="tab"><?php _e('Monitoring'); ?></a></li>
 						<li <?php if ($section == "localisation") echo 'class="active"'; ?> ><a href="#localisation" data-toggle="tab"><?php _e('Localisation'); ?></a></li>
                         <li <?php if ($section == "email") echo 'class="active"'; ?> ><a href="#email" data-toggle="tab"><?php _e('Email'); ?></a></li>
-						<li <?php if ($section == "sms") echo 'class="active"'; ?> ><a href="#sms" data-toggle="tab"><?php _e('SMS Gateway'); ?></a></li>
-						<li <?php if ($section == "twitter") echo 'class="active"'; ?> ><a href="#twitter" data-toggle="tab"><?php _e('Twitter'); ?></a></li>
-						<li <?php if ($section == "pushover") echo 'class="active"'; ?> ><a href="#pushover" data-toggle="tab"><?php _e('Pushover'); ?></a></li>
 						<li <?php if ($section == "templates") echo 'class="active"'; ?> ><a href="#templates" data-toggle="tab"><?php _e('Notifications'); ?></a></li>
 						<li <?php if ($section == "crons") echo 'class="active"'; ?> ><a href="#crons" data-toggle="tab"><?php _e('Cron Jobs'); ?></a></li>
                     </ul>
@@ -36,7 +33,7 @@
 								<div class="form-group">
 									<label for="app_url" class="control-label"><?php _e('Application URL'); ?></label>
 									<input class="form-control" id="app_url" value="<?php echo getConfigValue("app_url"); ?>" placeholder="Application URL" type="text" name="app_url" required>
-									<p class="help-block"><?php _e('Full installation URL including http:// or https:// (eg. http://mydomain.com/nmon/)'); ?></p>
+									<p class="help-block"><?php _e('Full installation URL including http:// or https:// (eg. http://mydomain.com/dms/)'); ?></p>
 								</div>
 
 								<div class="form-group">
@@ -396,7 +393,7 @@
 								<br>
 
 								<h3>Alerts</h3>
-								<a onClick='showM("?modal=notifications/edit&id=3&reroute=system/settings&section=templates");return false' data-toggle="modal" class="btn btn-flat btn-primary btn-sm"><?php _e('nMon Incident Alert'); ?></a>
+								<a onClick='showM("?modal=notifications/edit&id=3&reroute=system/settings&section=templates");return false' data-toggle="modal" class="btn btn-flat btn-primary btn-sm"><?php _e('Devrows SM Incident Alert'); ?></a>
 
 							</div>
 							<br>

@@ -18,7 +18,7 @@
         <b>Gateway Address</b> <?php echo rtrim(baseURL(), '/') ?>/agent.php<br>
     </p>
 
-    <p><?php _e('Agent will begin reporting data to nMon in a few minutes.'); ?></p>
+    <p><?php _e('Agent will begin reporting data to DSM in a few minutes.'); ?></p>
 
 </div>
 

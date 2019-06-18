@@ -11,7 +11,13 @@ switch($_GET['json']) {
     case "servers":
         $results = array();
 		// count all items
-		$allcount = $database->count("app_servers",["userid" => $_SESSION['user_id']]);
+		if(in_array("addRole",$perms)) {
+			$allcount = $database->count("app_servers");
+		}
+		else{
+			$allcount = $database->count("app_servers",["userid" => $_SESSION['user_id']]);
+		}
+		
         // column order mappings
         if($_GET['order']['0']['dir'] == "") $sort_direction = "ASC";
         if($_GET['order']['0']['dir'] == "desc") $sort_direction = "DESC";
@@ -47,7 +53,24 @@ switch($_GET['json']) {
 		}
 		// if no search tring is set
 		if( $_GET['search']['value'] == "") {
-            $items = $mysqli->query("SELECT id, type, name, status FROM app_servers WHERE userid = {$_SESSION['user_id']}");
+			if(in_array("addRole",$perms)) {
+				$items = $database->select("app_servers", [ "[>]app_groups" => ["groupid" => "id"] ], [
+					"app_servers.id",
+					"app_servers.type",
+					"app_servers.name",
+					"app_servers.status"
+				],
+				[
+					"LIMIT" => [ $_GET['start'],$_GET['length'] ],
+					"ORDER" => [$sort_column => $sort_direction]
+				]);
+			}
+			else{
+				$items = $mysqli->query("SELECT id, type, name, status FROM app_servers WHERE userid = {$_SESSION['user_id']}");
+			}
+			
+			
+            
             //$items = $query->fetch_array();
             
 			$filteredcount = count($items);

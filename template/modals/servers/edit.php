@@ -10,6 +10,12 @@
         <input type="text" class="form-control" id="name" name="name" value="<?php echo $server['name']; ?>" required>
         <p class="help-block"><?php _e('Hostname, IP Address or other for easy identification.'); ?></p>
     </div>
+	<div class="form-group">
+        <label for="username"><?php _e('Username'); ?> *</label>
+        <input type="username" class="form-control" id="username" name="username" value="<?php echo $server['username']; ?>" required>
+        <p class="help-block"><?php _e('username'); ?></p>
+                             
+    </div>
 
     <div class="form-group">
         <label for="password"><?php _e('Password'); ?> *</label>
