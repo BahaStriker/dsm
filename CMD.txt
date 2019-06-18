@@ -1,0 +1,658 @@
+<?php
+require_once 'core/init.php';
+require 'side-nav.php' ;
+if(isset($_POST['submit'])) {
+  $id = trim($_POST['id']);
+  $sql = $mysqli->query("SELECT * FROM server where id='{$id}' limit 1");
+  if ($sql) {
+    $row = $sql->fetch_assoc();
+    $ip=$row["ip"];
+    $port=$row["port"];
+    $user=$row["name"];
+    $pass=$row["password"];
+  }
+ 
+} elseif(isset($_GET['id'])) {
+    $id = trim($_GET['id']);
+    $sql = $mysqli->query("SELECT * FROM server where id='{$id}' limit 1");
+    if ($sql) {
+  
+      $row = $sql->fetch_assoc();
+      $ip=$row["ip"];
+      $port=$row["port"];
+      $user=$row["name"];
+      $pass=$row["password"];
+    }
+  }
+//test connection ssh
+$connection = ssh2_connect($ip,$port); 
+if (ssh2_auth_password($connection,$user, $pass)) {
+    echo "Authentication Successful!\n" ."</br>";
+    "</br>";
+   
+    //disconnect ssh 
+    if (!empty($_GET['disc'])) {
+      $shell=ssh2_shell($connection, 'terminal');
+      $stream = ssh2_exec($connection, "exit ");
+      unset($connection);
+    } 
+    if (!empty($_POST['submit'])) {
+      
+      $target_dir ='/home/user/testupload/';
+      $target_file = $target_dir . basename( $_FILES['uploaded_file']['name']);
+      $connection = ssh2_connect($ip,$port);
+      ssh2_auth_password($connection, $user, $pass);
+      $sftp = ssh2_sftp($connection);
+      $stream = fopen("ssh2.sftp://{$sftp}{$remotefile}",'w');
+      $file = file_get_contents($localfile);
+      fwrite($stream, $file);
+      fclose($stream);
+    }
+    ?>
+<h3 style="text-align: center;"> welcome to your server </h3>
+<center>
+<form action="#" method="post" enctype="multipart/form-data">
+    Select file to upload:
+    <input type="file" name="fileToUpload" id="fileToUpload">
+    <input type="submit" value="Upload Image" name="submit">
+</form>
+<form action="server.php" method="get">
+  <input type="hidden" name="disc" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="disconnect">
+</form>
+</center>  
+<?php
+//upload file
+/*if (!empty($_GET['send'])) {
+$localfile='/home/aymen/Desktop/upload.zip';
+$remotefile ='/home/user/testupload/upload.zip';
+$connection = ssh2_connect($ip,$port);
+ssh2_auth_password($connection, $user, $pass);
+$sftp = ssh2_sftp($connection);
+$stream = fopen("ssh2.sftp://{$sftp}{$remotefile}",'w');
+$file = file_get_contents($localfile);
+fwrite($stream, $file);
+fclose($stream);
+$ext = pathinfo($remotefile);
+$fileExtension = $ext['extension'];
+if ($fileExtension = 'zip'){
+  $connection = ssh2_connect($ip,$port);
+  ssh2_auth_password($connection,$user, $pass);
+  $shell=ssh2_shell($connection, 'terminal');
+  $stream1 = ssh2_exec($connection, "unzip $remotefile");
+  stream_set_blocking($stream1, true);
+  $out = ssh2_fetch_stream($stream1, SSH2_STREAM_STDIO);
+} 
+} */
+//download file
+if (!empty($_GET['down'])) {
+ 
+  $connection = ssh2_connect($ip,$port);
+  ssh2_auth_password($connection, $user, $pass);
+  $stream = ssh2_sftp($connection);
+   $localDir  = '/home/aymen/Desktop/ssh/aymen/b';
+  $remoteDir = '/root/aymen/b';
+  
+  if (!$dir = opendir("ssh2.sftp://{$stream}{$remoteDir}"))
+    die('Could not open the directory');
+$files = array();
+while (false !== ($file = readdir($dir)))
+{
+    if ($file == "." || $file == "..")
+        continue;
+    $files[] = $file;
+}
+foreach ($files as $file)
+{
+    echo "Copying file: $file\n";
+    if (!$remote = @fopen("ssh2.sftp://{$stream}/{$remoteDir}{$file}", 'r'))
+    {
+        echo "Unable to open remote file: $file\n";
+        continue;
+    }
+    if (!$local = @fopen($localDir . $file, 'w'))
+    {
+        echo "Unable to create local file: $file\n";
+        continue;
+    }
+    $read = 0;
+    $filesize = filesize("ssh2.sftp://{$stream}/{$remoteDir}{$file}");
+    while ($read < $filesize && ($buffer = fread($remote, $filesize - $read)))
+    {
+        $read += strlen($buffer);
+        if (fwrite($local, $buffer) === FALSE)
+        {
+            echo "Unable to write to local file: $file\n";
+            break;
+        }
+    }
+    fclose($local);
+    fclose($remote);
+}
+ // Create our SFTP resource
+ /*if (!$sftp = ssh2_sftp($connection)) throw new Exception('Unable to create SFTP connection.');
+ $files = scandir('ssh2.sftp://' . $sftp . $remoteDir);
+ if (!$dir = opendir('ssh2.sftp://' . $sftp . $remoteDir))
+       die('Failed to open the directory.');
+ if (!$remote = fopen("ssh2.sftp://$connection$remoteDir", 'r'))
+ {
+         die("Failed to open remote file: $remoteDir\n");
+ }
+ if (!$local = fopen($localDir, 'w'))
+ {
+    die("Failed to create local file: $localDir\n");
+    
+ }
+$read = 0;
+$filesize = filesize("ssh2.sftp://$connection/$remoteDir");
+ while ( ($read < $filesize) && ($buffer = fread($remote, $filesize - $read)) )
+{
+  $read += strlen($buffer);
+  if (fwrite($local, $buffer) === FALSE)
+{
+    echo "Failed to write to local file: $localDir\n";
+    break;
+}
+}
+fclose($local);
+fclose($remote);*/
+// Create our SFTP resource
+}
+ } else {
+   die('Authentication Failed..');
+ }
+?>
+   <main class="main-container">
+     <div class="container">
+     <div id="page-wrap">
+     <ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class=""><a href="#tab1" role="tab" data-toggle="tab">info</a></li>
+  <li role="presentation"><a href="#tab2" role="tab" data-toggle="tab">installation</a></li>
+  <li role="presentation"><a href="#tab3" role="tab" data-toggle="tab">terminal</a></li>
+</ul>
+</div>
+     <div class="tab-content"  >
+
+<div role="tabpanel" class="tab-pane active" id="tab1">
+
+<?php
+$shell=ssh2_shell($connection, 'terminal');
+$stream = ssh2_exec($connection, "hostnamectl");
+stream_set_blocking($stream, true);
+$out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+echo "OS====> ". stream_get_contents($out). "</br>";
+$shell=ssh2_shell($connection, 'terminal');
+$stream = ssh2_exec($connection, "last -n 3 ");
+stream_set_blocking($stream, true);
+$out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+echo "last login====>  ". stream_get_contents($out). "</br>";
+$shell=ssh2_shell($connection, 'terminal');
+$stream = ssh2_exec($connection, "whoami");
+stream_set_blocking($stream, true);
+$out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+echo "user====>  ". stream_get_contents($out). "</br>";
+  $shell=ssh2_shell($connection, 'terminal');
+$stream = ssh2_exec($connection, "date");
+stream_set_blocking($stream, true);
+$out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+echo "date de conx====>  ". stream_get_contents($out). "</br>";
+   $shell=ssh2_shell($connection, 'terminal');
+   $stream = ssh2_exec($connection, "sudo lshw -html > /root/{$ip}.html");
+   stream_set_blocking($stream, true);
+   $null = ssh2_exec($connection, "chmod -R 777 /root/{$ip}.html");
+   $out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+   $connection = ssh2_connect($ip,$port);
+   ssh2_auth_password($connection,$user, $pass);
+   if(@ssh2_scp_recv($connection, "/root/{$ip}.html", "/home/aymen/Desktop/devrows/data/{$ip}.html")){
+    include_once "/home/aymen/Desktop/devrows/data/{$ip}.html";
+   }
+   else{
+     die("hello world");
+   }
+   
+  ?>
+
+
+</div>
+<!--//end -->
+<div role="tabpanel" class="tab-pane fade" id="tab2">
+<?php
+if (isset ($_GET)){
+  if (isset ($_GET["update"])){
+    $cmd="apt-get update -y" ;
+  }
+  elseif (isset ($_GET["reboot"])){
+    $cmd="reboot" ;
+  }
+  //apache2
+  elseif (isset ($_GET["apacheinstall"])){
+    $cmd="apt-get install apache2 -y" ;
+  }
+  elseif (isset ($_GET["apacheversion"])){
+    $cmd="apache2 -v" ;
+  }
+  elseif (isset ($_GET["apachestatus"])){
+    $cmd="systemctl status apache2" ;
+  }
+  elseif (isset ($_GET["apachestart"])){
+    $cmd="systemctl start apache2.service" ;
+  }
+  elseif (isset ($_GET["apachestop"])){
+    $cmd="systemctl stop apache2.service" ;
+  }
+  elseif (isset ($_GET["apacherestart"])){
+    $cmd="systemctl restart apache2" ;
+  }
+  elseif (isset ($_GET["apachereload"])){
+    $cmd="systemctl reload apache2" ;
+  }
+  elseif (isset ($_GET["apacheenable"])){
+    $cmd="systemctl enable apache2" ;
+  }
+  elseif (isset ($_GET["apachedisable"])){
+    $cmd="systemctl disable apache2" ;
+  }
+  //mysql
+  elseif (isset ($_GET["mysqlinstall"])){
+    $cmd="date" ;
+  }
+  elseif (isset ($_GET["mysqlversion"])){
+    $cmd="mysql -V" ;
+  }
+  elseif (isset ($_GET["mysqlstatus"])){
+    $cmd="systemctl status mysql.service" ;
+  }
+  elseif (isset ($_GET["mysqlstart"])){
+    $cmd="systemctl start mysql" ;
+  }
+  elseif (isset ($_GET["mysqlstop"])){
+    $cmd="systemctl stop mysql" ;
+  }
+  elseif (isset ($_GET["mysqlrestart"])){
+    $cmd="systemctl restart mysql" ;
+  }
+  //nginx
+  elseif (isset ($_GET["nginxinstall"])){
+    $cmd="apt-get install nginx -y" ;
+  }
+  elseif (isset ($_GET["nginxversion"])){
+    $cmd="nginx -V" ;
+  }
+  elseif (isset ($_GET["nginxstatus"])){
+    $cmd="systemctl status nginx" ;
+  }
+  elseif (isset ($_GET["nginxstart"])){
+    $cmd="systemctl start nginx" ;
+  }
+  elseif (isset ($_GET["nginxstop"])){
+    $cmd="systemctl stop nginx" ;
+  }
+  elseif (isset ($_GET["nginxrestart"])){
+    $cmd="systemctl restart nginx" ;
+  }
+  elseif (isset ($_GET["nginxreload"])){
+    $cmd="systemctl reload nginx" ;
+  }
+  elseif (isset ($_GET["nginxquit"])){
+    $cmd="systemctl quit nginx" ;
+  }
+  //mongo
+  elseif (isset ($_GET["mongoinstall"])){
+    $cmd="apt-get install -y mongodb" ;
+  }
+  elseif (isset ($_GET["mongoversion"])){
+    $cmd="mongod --version" ;
+  }
+  elseif (isset ($_GET["mongostatus"])){
+    $cmd="systemctl status mongodb" ;
+  }
+  elseif (isset ($_GET["mongostart"])){
+    $cmd="systemctl start mongodb" ;
+  }
+  elseif (isset ($_GET["mongostop"])){
+    $cmd="systemctl stop mongodb" ;
+  }
+  elseif (isset ($_GET["mongorestart"])){
+    $cmd="systemctl restart mongodb" ;
+  }
+  elseif (isset ($_GET["mongoenable"])){
+    $cmd="systemctl enable mongodb" ;
+  }
+  elseif (isset ($_GET["mongodisable"])){
+    $cmd="systemctl disable mongodb" ;
+  }
+  //node
+  elseif (isset ($_GET["nodeinstall"])){
+    $cmd="apt-get install nodejs -y" ;
+  }
+  elseif (isset ($_GET["nodeversion"])){
+    $cmd="node -v" ;
+  }
+  //curl
+  elseif (isset ($_GET["curlinstall"])){
+    $cmd="apt-get install curl -y" ;
+  }
+  elseif (isset ($_GET["curlversion"])){
+    $cmd="curl -v" ;
+  }
+  //npm
+  elseif (isset ($_GET["npminstall"])){
+    $cmd="apt-get install npm -y" ;
+  }
+  elseif (isset ($_GET["npmversion"])){
+    $cmd="npm -v" ;
+  }
+  //java
+  elseif (isset ($_GET["javainstall"])){
+    $cmd="apt-get install default-jre default-jdk -y" ;
+  }
+  elseif (isset ($_GET["jreversion"])){
+    $cmd="java -version" ;
+  }
+  elseif (isset ($_GET["jdkversion"])){
+    $cmd="javac -version" ;
+  }
+  //angular
+  elseif (isset ($_GET["angularinstall"])){
+    $cmd="npm install -g @angular/cli" ;
+  }
+  elseif (isset ($_GET["angularversion"])){
+    $cmd="ng version" ;
+  }
+  //git
+  elseif (isset ($_GET["gitinstall"])){
+    $cmd="apt-get install git -y" ;
+  }
+  elseif (isset ($_GET["gitversion"])){
+    $cmd="git --version" ;
+  }
+  //php
+  elseif (isset ($_GET["phpinstall"])){
+    $cmd="date" ;
+  }
+  elseif (isset ($_GET["phpversion"])){
+    $cmd="date" ;
+  }
+  elseif (isset ($_GET["phpmodule"])){
+    $cmd="date" ;
+  }
+  
+    $connection = ssh2_connect($ip,$port);
+    ssh2_auth_password($connection,$user, $pass);
+    $shell=ssh2_shell($connection, 'terminal');
+    $stream = ssh2_exec($connection, $cmd);
+    stream_set_blocking($stream, true);
+    $out = ssh2_fetch_stream($stream, SSH2_STREAM_STDIO);
+    ?><pre><textarea readonly> <?php  echo " ". stream_get_contents($out); ?> </textarea></pre>
+<?php
+ }
+ ?>
+<form action="#" method="get">
+  <input type="hidden" name="update" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="update system">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="reboot" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="reboot server">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apacheinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apacheversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apachestop" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="stop apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apache start" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="start apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apachestatus" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="status apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apacherestart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="restart apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apachereload" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="reload apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apacheenable" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="enable apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="apachedisable" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="disable apache">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mysqlinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install mysql">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="msqlversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version mysql">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mysqlstatus" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="status mysql">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mysqlstart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="start mysql">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mysqlstop" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="stop mysql">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mysqlrestart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="restart mysql">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxstatus" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="status nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxstart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="start nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxstop" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="stop nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxrestart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="restart nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxquit" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="quit nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nginxreload" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="reload nginx">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongoinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongoversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongostatus" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="status mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongostart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="start mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongostop" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="stop mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongorestart" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="restart mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongoenable" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="enable mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="mongodisable" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="disable mongo">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nodeinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install node">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="nodeversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version node">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="curlinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install curl">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="curlversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version curl">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="npminstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install npm">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="npmversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version npm">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="javainstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install java">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="jreversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version JRE">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="jdkversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version JDK">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="angularinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install angular">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="angularversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version angular">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="gitinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install git">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="gitversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version git">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="phpinstall" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="install php ">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="phpversion" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="version php">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="phpmodule" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="module php">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="act1" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="ls">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="act2" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="pwd">
+</form>
+<form action="#" method="get">
+  <input type="hidden" name="act3" value="run">
+  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="submit" value="date">
+</form>
+
+  </div>
+<!--//end -->
+  <div role="tabpanel" class="tab-pane fade" id="tab3">
+
+  <iframe src="http://127.0.0.1:9527/" width="1000" height="500" ></iframe> 
+  </div>
+<!--//end -->
