@@ -52,7 +52,6 @@
     }
     ?>
 <h3 style="text-align: center;"> welcome to your server </h3>
-<center>
 <form action="#" method="post" enctype="multipart/form-data">
     Select file to upload:
     <input type="file" name="fileToUpload" id="fileToUpload">
@@ -62,7 +61,6 @@
   <input type="hidden" name="disc" value="run">
   <input type="hidden" name="id" value="<?=$id?>">
   <input type="submit" value="disconnect">
-</form>
-</center>  
+</form> 
 	</section><!-- /.content -->
 </aside><!-- /.right-side -->
