@@ -5,51 +5,38 @@
     <?php
 	if(isset($_GET['submit'])) {
         $id = trim($_GET['id']);
-        $sql = $mysqli->query("SELECT * FROM server where id='{$id}' limit 1");
-        if ($sql) {
-            $row = $sql->fetch_assoc();
-            $ip=$row["ip"];
-            $port=$row["port"];
-            $user=$row["name"];
-            $pass=$row["password"];
-        }
-        
-        } elseif(isset($_GET['id'])) {
-            $id = trim($_GET['id']);
-            $sql = $mysqli->query("SELECT * FROM server where id='{$id}' limit 1");
+        $sql = $mysqli->query("SELECT * FROM `server` where `id`='{$id}' limit 1");
             if ($sql) {
-        
-            $row = $sql->fetch_assoc();
-            $ip=$row["ip"];
-            $port=$row["port"];
-            $user=$row["name"];
-            $pass=$row["password"];
-            }
+                $row = $sql->fetch_assoc();
+                $ip=$row["ip"];
+                $port=$row["port"];
+                $user=$row["name"];
+                $pass=$row["password"];
         }
+    }
         //test connection ssh
         $connection = ssh2_connect($ip,$port); 
         if (ssh2_auth_password($connection,$user, $pass)) {
             echo "Authentication Successful!\n" ."</br>";
-            "</br>";
         
             //disconnect ssh 
             if (!empty($_GET['disc'])) {
-            $shell=ssh2_shell($connection, 'terminal');
-            $stream = ssh2_exec($connection, "exit ");
-            unset($connection);
+                $shell=ssh2_shell($connection, 'terminal');
+                $stream = ssh2_exec($connection, "exit ");
+                unset($connection);
             } 
-            if (!empty($_POST['submit'])) {
-            
-            $target_dir ='/home/user/testupload/';
-            $target_file = $target_dir . basename( $_FILES['uploaded_file']['name']);
-            $connection = ssh2_connect($ip,$port);
-            ssh2_auth_password($connection, $user, $pass);
-            $sftp = ssh2_sftp($connection);
-            $stream = fopen("ssh2.sftp://{$sftp}{$remotefile}",'w');
-            $file = file_get_contents($localfile);
-            fwrite($stream, $file);
-            fclose($stream);
-    }
+            if (!empty($_GET['submit'])) { 
+                $target_dir ='/home/user/testupload/';
+                $target_file = $target_dir . basename( $_FILES['uploaded_file']['name']);
+                $connection = ssh2_connect($ip,$port);
+                ssh2_auth_password($connection, $user, $pass);
+                $sftp = ssh2_sftp($connection);
+                $stream = fopen("ssh2.sftp://{$sftp}{$remotefile}",'w');
+                $file = file_get_contents($localfile);
+                fwrite($stream, $file);
+                fclose($stream);
+            }
+        }
     ?>
 <h3 style="text-align: center;"> welcome to your server </h3>
 <form action="#" method="post" enctype="multipart/form-data">
