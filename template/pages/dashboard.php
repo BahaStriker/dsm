@@ -46,6 +46,8 @@
   	             </div>
   	             <a href="?route=alerting/contacts" class="small-box-footer"><?php _e('View all'); ?> <i class="fa fa-arrow-circle-right"></i></a>
   	           </div>
+			</div>
+           <!-- ./col -->		 
 			
 		<?php if(in_array("viewUsers",$perms)) { ?>
 			<div class="col-lg-3 col-xs-6">
@@ -62,9 +64,6 @@
              </div>
            </div>
 		<?php } ?>
-
-           </div>
-           <!-- ./col -->
 
          </div>
          <!-- /.row -->
