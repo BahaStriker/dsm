@@ -20,7 +20,7 @@
 
 </textarea>
 <form action="#" method="get">
-  <input type="hidden" name="route" value="manageServer">
+  <input type="hidden" name="route" value="excecute">
   <input type="hidden" name="update" value="run">
   <input type="hidden" name="id" value="<?=$_GET['id']?>">
   <input type="submit" class="btn btn-primary btn-lg btn-block" value="System Update">
