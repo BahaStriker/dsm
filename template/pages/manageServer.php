@@ -1,4 +1,3 @@
-
 <aside class="right-side">
 	
 	<!-- Main content -->
@@ -20,9 +19,9 @@
           <textarea rows="5" cols="120" style="margin-top: 40px;margin-bottom: 20px;"></textarea>
 
 </textarea>
-<form action="#" method="get">
+<form action="?route=manageServer" method="get">
   <input type="hidden" name="update" value="run">
-  <input type="hidden" name="id" value="<?=$id?>">
+  <input type="hidden" name="id" value="<?=$_GET['id']?>">
   <input type="submit" class="btn btn-primary btn-lg btn-block" value="System Update">
 </form>
 <br>
