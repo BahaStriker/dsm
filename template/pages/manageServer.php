@@ -11,16 +11,16 @@
                     <div id="page-wrap">
      <ul class="nav nav-tabs" role="tablist">
   
-  <li role="presentation"><a href="#tab1" role="tab" data-toggle="tab">installation</a></li>
+  <li role="presentation" class="active"><a href="#tab1" role="tab" data-toggle="tab">installation</a></li>
   <li role="presentation"><a href="#tab2" role="tab" data-toggle="tab">terminal</a></li>
 </ul>
 </div>
      <div class="tab-content"  >
-          <div role="tabpanel" class="tab-pane fade" id="tab1">
+          <div role="tabpanel" class="tab-pane fade active in" id="tab1">
           <textarea rows="4" cols="50">
 
 </textarea>
-          <form action="#" method="get">
+<form action="#" method="get">
   <input type="hidden" name="update" value="run">
   <input type="hidden" name="id" value="<?=$id?>">
   <input type="submit" class="btn btn-primary" value="update system">
